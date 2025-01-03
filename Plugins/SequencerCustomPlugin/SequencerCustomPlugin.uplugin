@@ -1,0 +1,29 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "SequencerCustomPlugin",
+	"Description": "",
+	"Category": "Other",
+	"CreatedBy": "",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "SequencerCustomPlugin",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"name": "SequencerCustomPlugin_Editor",
+			"type": "Editor",
+			"loadingPhase": "PostEngineInit"
+		}
+	]
+}
