@@ -7,7 +7,7 @@
 #include "LevelSequence.h"
 #include "MVVM/Views/ViewUtilities.h"
 #include "MovieSceneSequenceEditor.h"
-
+#include "GameFramework/Character.h"
 
 /* FMyEventTrackEditor static functions
  *****************************************************************************/
@@ -38,26 +38,36 @@ FMyEventTrackEditor::FMyEventTrackEditor(TSharedRef<ISequencer> InSequencer)
 
 void FMyEventTrackEditor::BuildAddTrackMenu(FMenuBuilder& MenuBuilder)
 {
-	UMovieSceneSequence* RootMovieSceneSequence = GetSequencer()->GetRootMovieSceneSequence();
-	FMovieSceneSequenceEditor* SequenceEditor = FMovieSceneSequenceEditor::Find(RootMovieSceneSequence);
-
-
-	if (SequenceEditor && SequenceEditor->SupportsEvents(RootMovieSceneSequence))
-	{
-		MenuBuilder.AddMenuEntry(
-			FText::FromString(TEXT("Add My Event Track")),
-			FText::FromString(TEXT("Add My Event Track Tooltip")),
-			FSlateIcon(),
-			FUIAction(
-				FExecuteAction::CreateSP(this, &FMyEventTrackEditor::HandleAddEventTrackMenuEntryExecute, TArray<FGuid>(), UMyMovieSceneEventSection::StaticClass())
-			)
-		);
-	}
-
+//	UMovieSceneSequence* RootMovieSceneSequence = GetSequencer()->GetRootMovieSceneSequence();
+//	FMovieSceneSequenceEditor* SequenceEditor = FMovieSceneSequenceEditor::Find(RootMovieSceneSequence);
+//
+//
+//	if (SequenceEditor && SequenceEditor->SupportsEvents(RootMovieSceneSequence))
+//	{
+//		MenuBuilder.AddMenuEntry(
+//			FText::FromString(TEXT("Add My Event Track")),
+//			FText::FromString(TEXT("Add My Event Track Tooltip")),
+//			FSlateIcon(),
+//			FUIAction(
+//				FExecuteAction::CreateSP(this, &FMyEventTrackEditor::HandleAddEventTrackMenuEntryExecute, TArray<FGuid>(), UMyMovieSceneEventSection::StaticClass())
+//			)
+//		);
+//	}
+//
 }
 
 void FMyEventTrackEditor::BuildObjectBindingTrackMenu(FMenuBuilder& MenuBuilder, const TArray<FGuid>& ObjectBindings, const UClass* ObjectClass)
 {
+	if (!ObjectClass)
+	{
+		return;
+	}
+
+	if (!ObjectClass->IsChildOf(ACharacter::StaticClass()))
+	{
+		return;
+	}
+
 	UMovieSceneSequence* RootMovieSceneSequence = GetSequencer()->GetRootMovieSceneSequence();
 	FMovieSceneSequenceEditor* SequenceEditor = FMovieSceneSequenceEditor::Find(RootMovieSceneSequence);
 
