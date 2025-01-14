@@ -40,6 +40,9 @@ struct FMyMovieSceneEventParameters
 	UPROPERTY(EditAnywhere)
 	FString TestString = TEXT("Test");
 
+	UPROPERTY(EditAnywhere)
+	FTransform TestTransform;
+
 };
 
 USTRUCT(BlueprintType)

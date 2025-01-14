@@ -2,7 +2,7 @@
 
 
 #include "SequencerCustomPlugin/MovieScene/Evaluation/MyMovieSceneEventEvalTemplate.h"
-
+#include "GameFramework/Character.h"
 
 /*
 *****************************************************************************/
@@ -15,16 +15,27 @@ struct FMyMovieSceneExcuteEventData
 };
 
 /** A movie scene execution token that stores a specific transform, and an operand */
-struct FNCEventTrackExecutionToken
+struct FMyEventTrackExecutionToken
 	: IMovieSceneExecutionToken
 {
-	FNCEventTrackExecutionToken(TArray<FMyMovieSceneExcuteEventData> InEvents) : Events(MoveTemp(InEvents)) {}
+	FMyEventTrackExecutionToken(TArray<FMyMovieSceneExcuteEventData> InEvents) : Events(MoveTemp(InEvents)) {}
 
 	/** Execute this token, operating on all objects referenced by 'Operand' */
 	virtual void Execute(const FMovieSceneContext& Context, const FMovieSceneEvaluationOperand& Operand, FPersistentEvaluationData& PersistentData, IMovieScenePlayer& Player) override
 	{
 
-		// Resolve event contexts to trigger the event on
+		FMovieSceneSequenceID SequenceID = Operand.SequenceID;
+		TArrayView<TWeakObjectPtr<>> BoundObjects = Player.FindBoundObjects(Operand);
+		const UMovieSceneSequence* Sequence = Player.State.FindSequence(Operand.SequenceID);
+
+		UObject* BoundObject = BoundObjects.Num() > 0 ? BoundObjects[0].Get() : nullptr;
+
+		ACharacter* TargetCharacter = Cast<ACharacter>(BoundObject);
+		if (TargetCharacter==nullptr)
+		{
+			return;
+		}
+
 		TArray<UObject*> EventContexts = Player.GetEventContexts();
 
 		for (UObject* EventContextObject : EventContexts)
@@ -36,8 +47,7 @@ struct FNCEventTrackExecutionToken
 
 			for (FMyMovieSceneExcuteEventData& Event : Events)
 			{
-				FString log = TEXT("sec:") + FString::SanitizeFloat(Event.GlobalPosition) + TEXT(" testparam:") + FString::FromInt(Event.Payload.Parameters.TestInt) + Event.Payload.Parameters.TestString;
-				UE_LOG(LogTemp, Display, TEXT("%s"), *log);
+				TargetCharacter->SetActorTransform(Event.Payload.Parameters.TestTransform);
 			}
 		}
 
@@ -110,6 +120,6 @@ void FMyMovieSceneEventEvalTemplate::EvaluateSwept(const FMovieSceneEvaluationOp
 
 	if (Events.Num())
 	{
-		ExecutionTokens.Add(FNCEventTrackExecutionToken(MoveTemp(Events)));
+		ExecutionTokens.Add(FMyEventTrackExecutionToken(MoveTemp(Events)));
 	}
 }
